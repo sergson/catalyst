@@ -20,7 +20,20 @@ import numpy as np
 from numpy import float64, int64, nan
 import pandas as pd
 from pandas import isnull
-from pandas.tslib import normalize_date
+from distutils.version import StrictVersion
+pandas_version = StrictVersion(pd.__version__)
+if pandas_version >= StrictVersion('0.20'):
+    def normalize_date(dt):
+        """
+        Normalize datetime.datetime value to midnight. Returns datetime.date as
+        a datetime.datetime at midnight
+        Returns
+        -------
+        normalized : datetime.datetime or Timestamp
+        """
+        return dt.normalize()
+else:
+    from pandas.tseries.tools import normalize_date
 from six import iteritems
 from six.moves import reduce
 
@@ -981,7 +994,7 @@ class DataPortal(object):
                     )
 
             # Set leading values for assets that were missing data, then ffill.
-            df.ix[0, assets_with_leading_nan] = np.array(
+            df.loc[0, assets_with_leading_nan] = np.array(
                 initial_values,
                 dtype=np.float64
             )

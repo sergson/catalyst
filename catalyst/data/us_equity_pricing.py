@@ -49,7 +49,10 @@ from pandas import (
     to_datetime,
     Timestamp,
 )
-from pandas.tslib import iNaT
+try:
+    from pandas._libs.tslibs.nattype import iNaT
+except:
+    from pandas.tslib import iNaT
 from six import (
     iteritems,
     string_types,
