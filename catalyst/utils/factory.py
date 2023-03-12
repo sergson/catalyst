@@ -19,6 +19,21 @@ Factory functions to prepare useful data.
 """
 import pandas as pd
 import numpy as np
+from distutils.version import StrictVersion
+pandas_version = StrictVersion(pd.__version__)
+new_pandas = pandas_version >= StrictVersion('0.19')
+if pandas_version >= StrictVersion('0.20'):
+    def normalize_date(dt):
+        """
+        Normalize datetime.datetime value to midnight. Returns datetime.date as
+        a datetime.datetime at midnight
+        Returns
+        -------
+        normalized : datetime.datetime or Timestamp
+        """
+        return dt.normalize()
+else:
+    from pandas.tslib import normalize_date  # noqa
 from datetime import timedelta, datetime
 
 from catalyst.assets import Asset
@@ -117,9 +132,9 @@ def create_dividend(sid, payment, declared_date, ex_date, pay_date):
         'net_amount': payment,
         'payment_sid': None,
         'ratio': None,
-        'declared_date': pd.tslib.normalize_date(declared_date),
-        'ex_date': pd.tslib.normalize_date(ex_date),
-        'pay_date': pd.tslib.normalize_date(pay_date),
+        'declared_date': normalize_date(declared_date),
+        'ex_date': normalize_date(ex_date),
+        'pay_date': normalize_date(pay_date),
         'type': DATASOURCE_TYPE.DIVIDEND,
         'source_id': 'MockDividendSource'
     })
@@ -134,9 +149,9 @@ def create_stock_dividend(sid, payment_sid, ratio, declared_date,
         'ratio': ratio,
         'net_amount': None,
         'gross_amount': None,
-        'dt': pd.tslib.normalize_date(declared_date),
-        'ex_date': pd.tslib.normalize_date(ex_date),
-        'pay_date': pd.tslib.normalize_date(pay_date),
+        'dt': normalize_date(declared_date),
+        'ex_date': normalize_date(ex_date),
+        'pay_date': normalize_date(pay_date),
         'type': DATASOURCE_TYPE.DIVIDEND,
         'source_id': 'MockDividendSource'
     })
