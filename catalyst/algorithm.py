@@ -21,7 +21,20 @@ import logbook
 import pytz
 import pandas as pd
 from contextlib2 import ExitStack
-from pandas.tseries.tools import normalize_date
+from distutils.version import StrictVersion
+pandas_version = StrictVersion(pd.__version__)
+if pandas_version >= StrictVersion('0.20'):
+    def normalize_date(dt):
+        """
+        Normalize datetime.datetime value to midnight. Returns datetime.date as
+        a datetime.datetime at midnight
+        Returns
+        -------
+        normalized : datetime.datetime or Timestamp
+        """
+        return dt.normalize()
+else:
+    from pandas.tseries.tools import normalize_date
 import numpy as np
 
 from itertools import chain, repeat
@@ -515,8 +528,12 @@ class TradingAlgorithm(object):
         """
         If the clock property is not set, then create one based on frequency.
         """
-        trading_o_and_c = self.trading_calendar.schedule.ix[
-            self.sim_params.sessions]
+        if pandas_version >= StrictVersion('1.0'):
+            trading_o_and_c = self.trading_calendar.schedule.loc[
+                self.sim_params.sessions]
+        else:
+            trading_o_and_c = self.trading_calendar.schedule.loc[
+                self.sim_params.sessions]
         market_closes = trading_o_and_c['market_close']
         minutely_emission = False
 
