@@ -14,7 +14,18 @@
 # limitations under the License.
 from contextlib2 import ExitStack
 from logbook import Logger, Processor
-from pandas.tslib import normalize_date
+try:
+    from pandas.tslib import normalize_date
+except:
+    def normalize_date(dt):
+        """
+        Normalize datetime.datetime value to midnight. Returns datetime.date as
+        a datetime.datetime at midnight
+        Returns
+        -------
+        normalized : datetime.datetime or Timestamp
+        """
+        return dt.normalize()
 from catalyst.protocol import BarData
 from catalyst.utils.api_support import ZiplineAPI
 from six import viewkeys
