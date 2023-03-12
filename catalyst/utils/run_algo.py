@@ -280,16 +280,35 @@ def _run(handle_data,
         # Instead, we should center this data around exchanges.
         # We still need to support bundles for other misc data, but we
         # can handle this later.
-
-        if (start and start != pd.tslib.normalize_date(start)) or \
-                (end and end != pd.tslib.normalize_date(end)):
-            # todo: add to Sim_Params the option to
-            # start & end at specific times
-            log.warn(
-                "Catalyst currently starts and ends on the start and "
-                "end of the dates specified, respectively. We hope to "
-                "Modify this and support specific times in a future release."
-            )
+        try:
+            if (start and start != pd.tslib.normalize_date(start)) or \
+                    (end and end != pd.tslib.normalize_date(end)):
+                # todo: add to Sim_Params the option to
+                # start & end at specific times
+                log.warn(
+                    "Catalyst currently starts and ends on the start and "
+                    "end of the dates specified, respectively. We hope to "
+                    "Modify this and support specific times in a future release."
+                )
+        except:
+            def normalize_date(dt):
+                """
+                Normalize datetime.datetime value to midnight. Returns datetime.date as
+                a datetime.datetime at midnight
+                Returns
+                -------
+                normalized : datetime.datetime or Timestamp
+                """
+                return dt.normalize()
+            if (start and start != normalize_date(start)) or \
+                    (end and end != normalize_date(end)):
+                # todo: add to Sim_Params the option to
+                # start & end at specific times
+                log.warn(
+                    "Catalyst currently starts and ends on the start and "
+                    "end of the dates specified, respectively. We hope to "
+                    "Modify this and support specific times in a future release."
+                )
 
         data = DataPortalExchangeBacktest(
             exchange_names=[ex_name for ex_name in exchanges],
