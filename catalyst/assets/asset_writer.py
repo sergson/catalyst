@@ -254,7 +254,7 @@ def _split_symbol_mappings(df):
                 len(ambigious),
                 '' if len(ambigious) == 1 else 's',
                 '\n'.join(
-                    '%s:\n  intersections: %s\n  %s' % (
+                    '%s:\n  intersections: %s\n  %s' % ((
                         symbol,
                         tuple(map(_format_range, intersections)),
                         # indent the dataframe string
@@ -263,12 +263,12 @@ def _split_symbol_mappings(df):
                     for symbol, (intersections, df) in sorted(
                         ambigious.items(),
                         key=first,
-                    ),
+                    )),
                 ),
             )
         )
     return (
-        df.groupby(level=0).apply(_check_asset_group),
+        df.groupby(level=0).apply((_check_asset_group)),
         df[list(mapping_columns)],
     )
 
