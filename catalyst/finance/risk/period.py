@@ -30,7 +30,7 @@ from empyrical import (
     alpha_beta_aligned,
     annual_volatility,
     downside_risk,
-    information_ratio,
+    #information_ratio,
     sharpe_ratio,
     sortino_ratio
 )
@@ -148,10 +148,11 @@ class RiskMetricsPeriod(object):
             # TODO: what causes it to error out?
             self.sortino = 0
 
-        self.information = information_ratio(
-            self.algorithm_returns.values,
-            self.benchmark_returns.values,
-        )
+        #self.information = information_ratio(
+        #    self.algorithm_returns.values,
+        #    self.benchmark_returns.values,
+        #)
+        self.information = None
         self.alpha, self.beta = alpha_beta_aligned(
             self.algorithm_returns.values,
             self.benchmark_returns.values,

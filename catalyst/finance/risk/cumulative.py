@@ -18,7 +18,20 @@ import logbook
 import numpy as np
 
 import pandas as pd
-from pandas.tseries.tools import normalize_date
+from distutils.version import StrictVersion
+pandas_version = StrictVersion(pd.__version__)
+if pandas_version >= StrictVersion('0.20'):
+    def normalize_date(dt):
+        """
+        Normalize datetime.datetime value to midnight. Returns datetime.date as
+        a datetime.datetime at midnight
+        Returns
+        -------
+        normalized : datetime.datetime or Timestamp
+        """
+        return dt.normalize()
+else:
+    from pandas.tseries.tools import normalize_date
 
 from six import iteritems
 
