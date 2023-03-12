@@ -245,7 +245,7 @@ def _run(handle_data,
             exchanges=exchanges,
             asset_finder=env.asset_finder,
             trading_calendar=open_calendar,
-            first_trading_day=pd.to_datetime('today', utc=True)
+            first_trading_day=pd.to_datetime('today', utc=True).round('D')
         )
 
         sim_params = create_simulation_parameters(
