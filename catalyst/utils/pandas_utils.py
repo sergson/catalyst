@@ -7,10 +7,28 @@ from itertools import product
 import operator as op
 import warnings
 
+import numpy as np
 import pandas as pd
 from distutils.version import StrictVersion
+#from trading_calendars.utils.pandas_utils import days_at_time  # noqa: reexport
 
 pandas_version = StrictVersion(pd.__version__)
+new_pandas = pandas_version >= StrictVersion('0.19')
+skip_pipeline_new_pandas = \
+    'Pipeline categoricals are not yet compatible with pandas >=0.19'
+
+if pandas_version >= StrictVersion('0.20'):
+    def normalize_date(dt):
+        """
+        Normalize datetime.datetime value to midnight. Returns datetime.date as
+        a datetime.datetime at midnight
+        Returns
+        -------
+        normalized : datetime.datetime or Timestamp
+        """
+        return dt.normalize()
+else:
+    from pandas.tseries.tools import normalize_date  # noqa
 
 
 def july_5th_holiday_observance(datetime_index):
@@ -20,7 +38,6 @@ def july_5th_holiday_observance(datetime_index):
 def explode(df):
     """
     Take a DataFrame and return a triple of
-
     (df.index, df.columns, df.values)
     """
     return df.index, df.columns, df.values
@@ -95,30 +112,26 @@ def mask_between_time(dts, start, end, include_start=True, include_end=True):
 def find_in_sorted_index(dts, dt):
     """
     Find the index of ``dt`` in ``dts``.
-
     This function should be used instead of `dts.get_loc(dt)` if the index is
     large enough that we don't want to initialize a hash table in ``dts``. In
     particular, this should always be used on minutely trading calendars.
-
     Parameters
     ----------
     dts : pd.DatetimeIndex
         Index in which to look up ``dt``. **Must be sorted**.
     dt : pd.Timestamp
         ``dt`` to be looked up.
-
     Returns
     -------
     ix : int
         Integer index such that dts[ix] == dt.
-
     Raises
     ------
     KeyError
         If dt is not in ``dts``.
     """
     ix = dts.searchsorted(dt)
-    if dts[ix] != dt:
+    if ix == len(dts) or dts[ix] != dt:
         raise LookupError("{dt} is not in {dts}".format(dt=dt, dts=dts))
     return ix
 
@@ -126,14 +139,10 @@ def find_in_sorted_index(dts, dt):
 def nearest_unequal_elements(dts, dt):
     """
     Find values in ``dts`` closest but not equal to ``dt``.
-
     Returns a pair of (last_before, first_after).
-
     When ``dt`` is less than any element in ``dts``, ``last_before`` is None.
     When ``dt`` is greater any element in ``dts``, ``first_after`` is None.
-
     ``dts`` must be unique and sorted in increasing order.
-
     Parameters
     ----------
     dts : pd.DatetimeIndex
@@ -190,7 +199,7 @@ def timedelta_to_integral_minutes(delta):
 @contextmanager
 def ignore_pandas_nan_categorical_warning():
     with warnings.catch_warnings():
-        # Pandas >= 0.18 doesn't like null-ish values in catgories, but
+        # Pandas >= 0.18 doesn't like null-ish values in categories, but
         # avoiding that requires a broader change to how missing values are
         # handled in pipeline, so for now just silence the warning.
         warnings.filterwarnings(
@@ -200,20 +209,19 @@ def ignore_pandas_nan_categorical_warning():
         yield
 
 
-_INDEXER_NAMES = [
-    '_' + name for (name, _) in pd.core.indexing.get_indexers_list()
-]
+# pd==.21.x enumarted list from pd.Index.get_indexers_list()
+# https://github.com/pandas-dev/pandas/blob/0.21.x/pandas/core/indexing.py#L29
+# in pd==1 now mixins. maybe do not have to remove these?
+_INDEXER_NAMES = ['_ix', '_iloc', '_loc', '_at', '_iat']
 
 
 def clear_dataframe_indexer_caches(df):
     """
     Clear cached attributes from a pandas DataFrame.
-
     By default pandas memoizes indexers (`iloc`, `loc`, `ix`, etc.) objects on
     DataFrames, resulting in refcycles that can lead to unexpectedly long-lived
     DataFrames. This function attempts to clear those cycles by deleting the
     cached indexers from the frame.
-
     Parameters
     ----------
     df : pd.DataFrame
@@ -230,14 +238,12 @@ def categorical_df_concat(df_list, inplace=False):
     Prepare list of pandas DataFrames to be used as input to pd.concat.
     Ensure any columns of type 'category' have the same categories across each
     dataframe.
-
     Parameters
     ----------
     df_list : list
         List of dataframes with same columns.
     inplace : bool
         True if input list can be modified. Default is False.
-
     Returns
     -------
     concatenated : df
@@ -255,10 +261,8 @@ def categorical_df_concat(df_list, inplace=False):
     categorical_columns = df.columns[df.dtypes == 'category']
 
     for col in categorical_columns:
-        new_categories = sorted(
-            set().union(
-                *(frame[col].cat.categories for frame in df_list)
-            )
+        new_categories = _sort_set_none_first(
+            _union_all(frame[col].cat.categories for frame in df_list)
         )
 
         with ignore_pandas_nan_categorical_warning():
@@ -266,3 +270,77 @@ def categorical_df_concat(df_list, inplace=False):
                 df[col].cat.set_categories(new_categories, inplace=True)
 
     return pd.concat(df_list)
+
+
+def _union_all(iterables):
+    """Union entries in ``iterables`` into a set.
+    """
+    return set().union(*iterables)
+
+
+def _sort_set_none_first(set_):
+    """Sort a set, sorting ``None`` before other elements, if present.
+    """
+    if None in set_:
+        set_.remove(None)
+        out = [None]
+        out.extend(sorted(set_))
+        set_.add(None)
+        return out
+    else:
+        return sorted(set_)
+
+
+def empty_dataframe(*columns):
+    """Create an empty dataframe with columns of particular types.
+    Parameters
+    ----------
+    *columns
+        The (column_name, column_dtype) pairs.
+    Returns
+    -------
+    typed_dataframe : pd.DataFrame
+        The empty typed dataframe.
+    Examples
+    --------
+    >>> df = empty_dataframe(
+    ...     ('a', 'int64'),
+    ...     ('b', 'float64'),
+    ...     ('c', 'datetime64[ns]'),
+    ... )
+    >>> df
+    Empty DataFrame
+    Columns: [a, b, c]
+    Index: []
+    df.dtypes
+    a             int64
+    b           float64
+    c    datetime64[ns]
+    dtype: object
+    """
+    return pd.DataFrame(np.array([], dtype=list(columns)))
+
+
+def check_indexes_all_same(indexes, message="Indexes are not equal."):
+    """Check that a list of Index objects are all equal.
+    Parameters
+    ----------
+    indexes : iterable[pd.Index]
+        Iterable of indexes to check.
+    Raises
+    ------
+    ValueError
+        If the indexes are not all the same.
+    """
+    iterator = iter(indexes)
+    first = next(iterator)
+    for other in iterator:
+        same = (first == other)
+        if not same.all():
+            bad_loc = np.flatnonzero(~same)[0]
+            raise ValueError(
+                "{}\nFirst difference is at index {}: "
+                "{} != {}".format(
+                    message, bad_loc, first[bad_loc], other[bad_loc]
+                ),
+            )
