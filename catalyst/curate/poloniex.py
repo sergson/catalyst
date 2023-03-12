@@ -13,7 +13,7 @@ from catalyst.exchange.utils.exchange_utils import \
     get_exchange_symbols_filename
 
 DT_START = int(time.mktime(datetime(2010, 1, 1, 0, 0).timetuple()))
-DT_END = pd.to_datetime('today').value // 10 ** 9
+DT_END = pd.to_datetime('today').round('D').value // 10 ** 9
 CSV_OUT_FOLDER = os.environ.get('CSV_OUT_FOLDER', '/efs/exchanges/poloniex/')
 CONN_RETRIES = 2
 
