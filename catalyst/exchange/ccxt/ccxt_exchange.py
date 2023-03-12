@@ -40,10 +40,8 @@ SUPPORTED_EXCHANGES = dict(
     bittrex=ccxt.bittrex,
     poloniex=ccxt.poloniex,
     bitmex=ccxt.bitmex,
-    gdax=ccxt.gdax,
     huobipro=ccxt.huobipro,
     okex=ccxt.okex,
-    hitbtc=ccxt.hitbtc2,
     kucoin=ccxt.kucoin,
 )
 
@@ -526,7 +524,7 @@ class CCXT(Exchange):
 
         return asset_defs
 
-    def get_asset_def(self, market, is_local=False):
+    def get_asset_def(self, market, is_local=True):
         """
         The asset definition (in symbols.json files) corresponding
         to the the specified market.
@@ -561,7 +559,7 @@ class CCXT(Exchange):
         else:
             return None
 
-    def create_trading_pair(self, market, asset_def=None, is_local=False):
+    def create_trading_pair(self, market, asset_def=None, is_local=True):
         """
         Creating a TradingPair from market and asset data.
 
