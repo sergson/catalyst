@@ -7,7 +7,12 @@ from pandas.tseries.holiday import (
     USLaborDay,
     USThanksgivingDay
 )
-from pandas.tslib import Timestamp
+#MOD start
+try:
+    from pandas.tslib import Timestamp
+except:
+    from pandas import Timestamp
+#MOD end
 from pytz import timezone
 
 from catalyst.utils.calendars import TradingCalendar
