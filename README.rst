@@ -1,5 +1,5 @@
-.. image:: https://
-    :target: https://
+.. image::
+    :target:
     :align: center
     :alt: Enigmatic | Catalyst
 
@@ -15,6 +15,7 @@ Service    Master                    Develop
 CI Badge   |travis-master|           |travis-develop|
 =========  ===============           ================
 
+Builds on Catalyst.
 Catalyst is an algorithmic trading library for crypto-assets written in Python.
 It allows trading strategies to be easily expressed and backtested against 
 historical data (with daily and minute resolution), providing analytics and 
@@ -62,26 +63,26 @@ Go to our `Documentation Website <https://enigmampc.github.io/catalyst/>`_.
 
 
 
-.. |version tag| image:: https://img.shields.io/pypi/v/enigma-catalyst.svg
-   :target: https://pypi.python.org/pypi/enigma-catalyst
+.. |version tag| image::
+   :target:
 
-.. |version status| image:: https://img.shields.io/pypi/pyversions/enigma-catalyst.svg
-   :target: https://pypi.python.org/pypi/enigma-catalyst
+.. |version status| image::
+   :target:
    
-.. |forum| image:: https://img.shields.io/badge/forum-join-green.svg
-   :target: https://forum.catalystcrypto.io/
+.. |forum| image::
+   :target:
 
-.. |discord| image:: https://img.shields.io/badge/discord-join%20chat-green.svg
-   :target: https://discordapp.com/invite/SJK32GY
+.. |discord| image::
+   :target:
 
-.. |twitter| image:: https://img.shields.io/twitter/follow/enigmampc.svg?style=social&label=Follow&style=flat-square
-   :target: https://twitter.com/catalystcrypto
+.. |twitter| image::
+   :target:
 
-.. |travis-develop| image:: https://travis-ci.com/enigmampc/catalyst.svg?branch=develop
-   :target: https://travis-ci.com/enigmampc/catalyst
+.. |travis-develop| image::
+   :target:
 
-.. |travis-master| image:: https://travis-ci.com/enigmampc/catalyst.svg?branch=master
-   :target: https://travis-ci.com/enigmampc/catalyst
+.. |travis-master| image::
+   :target:
 
 
 
