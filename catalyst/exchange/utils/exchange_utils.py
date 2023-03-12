@@ -91,7 +91,7 @@ def is_blacklist(exchange_name):
     return os.path.exists(filename)
 
 
-def get_exchange_symbols_filename(exchange_name, is_local=False):
+def get_exchange_symbols_filename(exchange_name, is_local=True):
     """
     The absolute path of the exchange's symbol.json file.
 
@@ -104,7 +104,8 @@ def get_exchange_symbols_filename(exchange_name, is_local=False):
     str
 
     """
-    name = 'symbols.json' if not is_local else 'symbols_local.json'
+    #name = 'symbols.json' if not is_local else 'symbols_local.json'
+    name = 'symbols_local.json'
     exchange_folder = get_exchange_folder(exchange_name)
     return os.path.join(exchange_folder, name)
 
@@ -129,7 +130,7 @@ def download_exchange_symbols(exchange_name):
     return response
 
 
-def get_exchange_symbols(exchange_name, is_local=False):
+def get_exchange_symbols(exchange_name, is_local=True):
     """
     The de-serialized content of the exchange's symbols.json.
 
@@ -169,7 +170,7 @@ def get_exchange_symbols(exchange_name, is_local=False):
         )
 
 
-def save_exchange_symbols(exchange_name, assets, is_local=False):
+def save_exchange_symbols(exchange_name, assets, is_local=True):
     """
     Save assets into an exchange_symbols file.
 
