@@ -287,7 +287,7 @@ class Exchange:
         log.debug('found asset: {}'.format(asset))
         return asset
 
-    def fetch_symbol_map(self, is_local=False):
+    def fetch_symbol_map(self, is_local=True):
         index = 1 if is_local else 0
         if self._symbol_maps[index] is not None:
             return self._symbol_maps[index]
@@ -308,7 +308,7 @@ class Exchange:
         """
 
     @abstractmethod
-    def load_assets(self, is_local=False):
+    def load_assets(self, is_local=True):
         """
         Populate the 'assets' attribute with a dictionary of Assets.
         The key of the resulting dictionary is the exchange specific
