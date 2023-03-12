@@ -16,7 +16,26 @@ from functools import partial
 
 import logbook
 import pandas as pd
-from pandas.tslib import normalize_date
+#MOD start
+from distutils.version import StrictVersion
+pandas_version = StrictVersion(pd.__version__)
+new_pandas = pandas_version >= StrictVersion('0.19')
+skip_pipeline_new_pandas = \
+    'Pipeline categoricals are not yet compatible with pandas >=0.19'
+
+if pandas_version >= StrictVersion('0.20'):
+    def normalize_date(dt):
+        """
+        Normalize datetime.datetime value to midnight. Returns datetime.date as
+        a datetime.datetime at midnight
+        Returns
+        -------
+        normalized : datetime.datetime or Timestamp
+        """
+        return dt.normalize()
+else:
+    from pandas.tseries.tools import normalize_date  # noqa
+# #MOD end
 from six import string_types
 from sqlalchemy import create_engine
 
