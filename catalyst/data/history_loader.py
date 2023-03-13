@@ -21,9 +21,11 @@ from abc import (
 from numpy import concatenate
 from lru import LRU
 from pandas import isnull
-try:
-    from pandas.tslib import normalize_date
-except:
+import pandas as pd
+from distutils.version import StrictVersion
+pandas_version = StrictVersion(pd.__version__)
+new_pandas = pandas_version >= StrictVersion('0.19')
+if pandas_version >= StrictVersion('0.20'):
     def normalize_date(dt):
         """
         Normalize datetime.datetime value to midnight. Returns datetime.date as
@@ -33,6 +35,8 @@ except:
         normalized : datetime.datetime or Timestamp
         """
         return dt.normalize()
+else:
+    from pandas.tslib import normalize_date  # noqa
 from toolz import sliding_window
 
 from six import with_metaclass
