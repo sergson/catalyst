@@ -7,12 +7,14 @@ from pandas.tseries.holiday import (
     USLaborDay,
     USThanksgivingDay
 )
-#MOD start
-try:
-    from pandas.tslib import Timestamp
-except:
+import pandas as pd
+from distutils.version import StrictVersion
+pandas_version = StrictVersion(pd.__version__)
+new_pandas = pandas_version >= StrictVersion('0.19')
+if pandas_version >= StrictVersion('0.20'):
     from pandas import Timestamp
-#MOD end
+else:
+    from pandas.tslib import Timestamp
 from pytz import timezone
 
 from catalyst.utils.calendars import TradingCalendar
