@@ -773,7 +773,7 @@ def forward_fill_df_if_needed(df, periods):
     # volume should always be 0 (if there were no trades in this interval)
     df['volume'] = df['volume'].fillna(0.0)
     # ie pull the last close into this close
-    df['close'] = df.fillna(method='pad')
+    df['close'] = df['close'].fillna(method='pad')
     # now copy the close that was pulled down from the last timestep
     # into this row, across into o/h/l
     df['open'] = df['open'].fillna(df['close'])
