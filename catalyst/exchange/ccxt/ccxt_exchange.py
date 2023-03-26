@@ -328,7 +328,7 @@ class CCXT(Exchange):
         '1y': '1year',
         """
         match = re.match(
-            r'([0-9].*)?(m|M|d|D|h|H|T|w|W|min)', value, re.M | re.I
+            r'([0-9].*)?(min|M|d|D|h|H|T|w|W|m)', value, re.M | re.I
         )
         if match:
             candle_size = int(match.group(1)) \
@@ -380,7 +380,7 @@ class CCXT(Exchange):
         return result
 
     @staticmethod
-    def get_timeframe(freq, raise_error=True):
+    def get_timeframe(freq, raise_error=True, source='catalyst'):
         """
         The CCXT timeframe from the Catalyst frequency.
 
@@ -419,13 +419,13 @@ class CCXT(Exchange):
         )
 
     def get_candles(self, freq, assets, bar_count=1, start_dt=None,
-                    end_dt=None):
+                    end_dt=None, source='catalyst'):
         is_single = (isinstance(assets, TradingPair))
         if is_single:
             assets = [assets]
 
         symbols = self.get_symbols(assets)
-        timeframe = CCXT.get_timeframe(freq)
+        timeframe = CCXT.get_timeframe(freq, source)
 
         if timeframe not in self.api.timeframes:
             freqs = [CCXT.get_frequency(t) for t in self.api.timeframes]
