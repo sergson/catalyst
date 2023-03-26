@@ -972,7 +972,7 @@ class Exchange:
         pass
 
     @abstractmethod
-    def get_candles(self, freq, assets, bar_count, start_dt=None, end_dt=None):
+    def get_candles(self, freq, assets, bar_count, start_dt=None, end_dt=None, source='catalyst'):
         """
         Retrieve OHLCV candles for the given assets
 
