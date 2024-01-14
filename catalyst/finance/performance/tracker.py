@@ -129,7 +129,7 @@ class PerformanceTracker(object):
         elif self.emission_rate == 'minute':
             self.all_benchmark_returns = pd.Series(index=pd.date_range(
                 self.sim_params.first_open, self.sim_params.last_close,
-                freq='Min')
+                freq='Min'), dtype='float64'
             )
             self.cumulative_risk_metrics = \
                 risk.RiskMetricsCumulative(
