@@ -151,7 +151,7 @@ class RiskMetricsCumulative(object):
         self.max_leverages = empty_cont.copy()
         self.max_leverage = 0
         self.current_max = -np.inf
-        self.daily_treasury = pd.Series(index=self.sessions)
+        self.daily_treasury = pd.Series(index=self.sessions, dtype='float64')
         self.treasury_period_return = np.nan
 
         self.num_trading_days = 0
