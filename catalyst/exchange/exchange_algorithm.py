@@ -749,7 +749,7 @@ class ExchangeTradingAlgorithmLive(ExchangeTradingAlgorithmBase):
         """
         starting = period_stats['starting_cash']
         current = period_stats['portfolio_value']
-        appreciation = (current / starting) - 1
+        appreciation = (current / starting) - 1 if starting > 0 else 0
         perc = (appreciation * 100) if current != 0 else 0
 
         log.debug('adding pnl stats: {:6f}%'.format(perc))
