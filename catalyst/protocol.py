@@ -190,7 +190,7 @@ class Portfolio(object):
                 asset_multiplier(asset)
             )
             for asset, position in self.positions.items()
-        })
+        }, dtype='float64')
         return position_values / self.portfolio_value
 
 
