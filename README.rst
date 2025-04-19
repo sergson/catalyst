@@ -25,6 +25,7 @@ and Poloniex) with more being added over time. Catalyst empowers users to share
 and curate data and build profitable, data-driven investment strategies. Please 
 visit `catalystcrypto.io <https://www.catalystcrypto.io>`_ to learn more about Catalyst.
 
+
 Catalyst builds on top of the well-established 
 `Zipline <https://github.com/quantopian/zipline>`_ project. We did our best to 
 minimize structural changes to the general API to maximize compatibility with 
